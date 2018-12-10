@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExtensionList>
+    <Extension Id="inventsable.protobrowser.panel">
+        <HostList>
+            <Host Name="ILST" Port="2106"/>
+            <Host Name="PHXS" Port="2107"/>
+            <Host Name="AEFT" Port="2108"/>
+        </HostList>
+    </Extension>
+</ExtensionList>

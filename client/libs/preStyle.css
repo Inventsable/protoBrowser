@@ -1,0 +1,65 @@
+:root {
+  font-size: 12px;
+  --quad: cubic-bezier(0.48, 0.04, 0.52, 0.96);
+  --quart: cubic-bezier(0.76, 0.00, 0.24, 1.00);
+  --quint: cubic-bezier(0.84, 0.00, 0.16, 1.00);
+
+  --color-null: #4a4a4a;
+  --color-debug-bg: white;
+
+  /* CSS variables reactively change via component */
+  --color-bg: #323232;
+  --color-icon: #a1a1a1;
+  --color-border: #3e3e3e;
+  --color-scrollbar: #2a2a2a;
+  --color-scrollbar-thumb: #3e3e3e;
+  --color-scrollbar-thumb-hover: #525252;
+  --color-button-hover: #292929;
+  --color-button-active: #1f1f1f;
+  --color-button-disabled: #393939;
+  --color-selection: #46a0f5;
+  --color-text-active: #1b1b1b;
+  --color-text-default: #a1a1a1;
+  --color-text-disabled: #525252;
+  --color-input-focus: #fcfcfc;
+  --color-input-idle: #262626;
+  --scrollbar-thumb-width: 20px;
+  --scrollbar-thumb-radius: 20px;
+  --panel-height: 50px;
+  --panel-width: 50px;
+  /*  */
+
+  --color-cancel: #D32F2F;
+  --font-size: .875rem;
+  color: var(--color-text-default);
+  font-family: Rubik;
+  margin: .5rem .25rem 0px .25rem;
+  background-color: var(--color-bg);
+  transition: background-color 80ms var(--quad) 20ms;
+}
+
+svg {
+  width: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  display: none;
+  background: var(--color-scrollbar);
+}
+::-webkit-scrollbar-thumb {
+  width: var(--thumb-width);
+  background: var(--color-scrollbar-thumb);
+  border-radius: var(--scrollbar-thumb-radius);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-scrollbar-thumb-hover);
+}
+::-webkit-scrollbar-corner, ::-webkit-scrollbar-resizer, ::-webkit-scrollbar-button {
+  display: none;
+}
+
+#app {
+  box-sizing: border-box;
+  width: 100%;
+}
