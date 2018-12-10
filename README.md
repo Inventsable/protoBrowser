@@ -1,6 +1,6 @@
 # protoBrowser
 
-## native panel portal for [inventsable.cc](www.inventsable.cc) extensions
+## native panel portal for [inventsable.cc](www.inventsable.cc) extensions with general web browser
 
 ![](https://thumbs.gfycat.com/ThankfulPastGoshawk-size_restricted.gif)
 
@@ -10,6 +10,8 @@
 
 ## install
 ``` bash
-# .../AppData/Roaming/Adobe/CEP/extensions
+# use the latest ZXP in /builds/
+
+# or git clone into .../AppData/Roaming/Adobe/CEP/extensions
 git clone https://github.com/Inventsable/protoBrowser.git
 ```
