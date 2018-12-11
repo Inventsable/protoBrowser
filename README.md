@@ -1,8 +1,10 @@
 # protoBrowser
 
-## native panel portal for [inventsable.cc](www.inventsable.cc) extensions with general web browser
+## new generation template syncs with protoDebug to sync panel information and easily 
 
 ![](https://thumbs.gfycat.com/BleakThatArkshell-size_restricted.gif)
+
+## native panel portal for [inventsable.cc](www.inventsable.cc) extensions with general web browser
 
 ![](https://thumbs.gfycat.com/ThankfulPastGoshawk-size_restricted.gif)
 
