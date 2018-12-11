@@ -2,6 +2,8 @@
 
 ## native panel portal for [inventsable.cc](www.inventsable.cc) extensions with general web browser
 
+![](https://thumbs.gfycat.com/BleakThatArkshell-size_restricted.gif)
+
 ![](https://thumbs.gfycat.com/ThankfulPastGoshawk-size_restricted.gif)
 
 [HD mirror](https://gfycat.com/ThankfulPastGoshawk)
