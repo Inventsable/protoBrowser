@@ -1,6 +1,6 @@
 # protoBrowser
 
-## new generation template syncs with protoDebug to sync panel information and easily 
+## new generation template syncs with protoDebug to sync panel information
 
 ![](https://thumbs.gfycat.com/BleakThatArkshell-size_restricted.gif)
 
