@@ -3,14 +3,19 @@ loadUniversalJSXLibraries();
 loadJSX(csInterface.hostEnvironment.appName + '/host.jsx');
 window.Event = new Vue();
 
+csInterface.addEventListener('debug.on', function (evt) {
+  console.log('Caught debug')
+  Event.$emit('debugModeOn');
+});
+csInterface.addEventListener('debug.off', function (evt) {
+  console.log('Caught debug')
+  Event.$emit('debugModeOff');
+});
+
 csInterface.addEventListener('browser.goto', function(evt) {
-  console.log('Caught console')
-  console.log(evt);
   var link = evt.data;
-  if (/^www/.test(link)) {
+  if (/^www/.test(link))
     link = 'https:\/\/' + link;
-  }
-  console.log(link)
   Event.$emit('submitLink', link);
 });
 
@@ -40,16 +45,37 @@ Vue.component('protobrowser', {
   `,
   data() {
     return {
-      wakeOnly: true,
+      wakeOnly: false,
       showConsole: true,
     }
   },
   computed: {
-    // showConsole: function () { return this.$root.showConsole },
+    debugMode: function() { return this.$root.debugMode },
+    isWake: function () { return this.$root.isWake },
   },
   methods: {
+    checkDebug() {
+      if ((this.isWake) && (this.debugMode)) {
+        let selection = this.$root.getCSS('color-selection');
+        this.$root.setCSS('color-debug', selection);
+      } else {
+        this.$root.setCSS('color-debug', 'transparent');
+      }
+      // if ((this.isWake) && (this.debugMode))
+        // return `border: 1.35px solid ${this.$root.getCSS('color-selection')}`;
+      // else
+        // return `border: 1.35px solid transparent`;
+    },
     wakeApp() {
       this.$root.wake();
+      this.$root.dispatchEvent('debug.target', this.$root.name);
+      if (this.debugMode) {
+        console.log('Attempting to send debug.link')
+        this.$root.dispatchEvent('debug.link', 'Can start to read')
+      } else {
+        console.log('Not in debug mode')
+      }
+      this.checkDebug();
       Event.$emit('startStats');
     },
     sleepApp() {
@@ -58,8 +84,16 @@ Vue.component('protobrowser', {
         Event.$emit('clearStats');
       } else {
         this.$root.sleep();
+        if (this.debugMode) {
+          console.log('Attempting to send debug.unlink')
+          this.$root.dispatchEvent('debug.target', '');
+          this.$root.dispatchEvent('debug.unlink', 'Can no longer read')
+        } else {
+          console.log('Not in debug mode')
+        }
         Event.$emit('clearStats');
       }
+      this.checkDebug();
     }
   }
 })
@@ -282,12 +316,34 @@ Vue.component('event-manager', {
     window.addEventListener('resize', this.handleResize);
     csInterface.addEventListener(CSInterface.THEME_COLOR_CHANGED_EVENT, self.appThemeChanged);
     this.appThemeChanged();
+    Event.$on('newAction', this.checkDebugAction);
+    Event.$on('keypress', this.checkDebugKeypress);
+    // Event.$on('keypress', this.getLastKey);
   },
   computed: {
+    isDefault: function () { return this.$root.isDefault },
     mouseX: function () { return this.$root.mouseX; },
     mouseY: function () { return this.$root.mouseY; },
+    hasCtrl: function () { return this.$root.Ctrl ? 'Ctrl' : false; },
+    hasShift: function () { return this.$root.Shift ? 'Shift' : false; },
+    hasAlt: function () { return this.$root.Alt ? 'Alt' : false; },
   },
   methods: {
+    checkDebugAction(msg) {
+      if (this.$root.debugMode) {
+        console.log(`Debug action is ${msg}`)
+        this.$root.lastAction = msg;
+        this.$root.dispatchEvent('debug.listen', JSON.stringify(this.$root.clone));
+      }
+    },
+    checkDebugKeypress(e) {
+      if (this.$root.debugMode) {
+        console.log(`Debug keypress is ${e.key}`)
+        this.getLastKey(e.key);
+        this.$root.dispatchEvent('debug.listen', JSON.stringify(this.$root.clone));
+      }
+      // console.log(msg);
+    },
     setPanelCSSHeight() {
       this.$root.setCSS('evt-height', `${this.$root.panelHeight - 50}px`);
       this.$root.setCSS('panel-height', `${this.$root.panelHeight - 20}px`);
@@ -308,6 +364,9 @@ Vue.component('event-manager', {
         this.$root.panelWidth = document.documentElement.clientWidth;
         this.$root.panelHeight = document.documentElement.clientHeight;
         this.setPanelCSSHeight();
+        if (this.$root.debugMode) {
+          this.$root.dispatchEvent('debug.listen', JSON.stringify(this.$root.clone));
+        }
       }
     },
     activeMods() {
@@ -335,6 +394,7 @@ Vue.component('event-manager', {
     onMouseDown(e, el) {
       this.$root.isDragging = true, this.wasDragging = false;
       this.lastMouseX = this.$root.mouseX, this.lastMouseY = this.$root.mouseY;
+      Event.$emit('newAction', 'Mouse click');
     },
     onMouseUp(e, el) {
       if (this.$root.isDragging) {
@@ -351,6 +411,7 @@ Vue.component('event-manager', {
       }
     },
     onMouseMove(e, el) {
+      // console.log(e)
       this.$root.mouseX = e.clientX, this.$root.mouseY = e.clientY;
       if (this.$root.isDragging) {
         Event.$emit('newAction', 'Click-drag')
@@ -362,26 +423,71 @@ Vue.component('event-manager', {
         }
       }
       this.$root.parseModifiers(e);
+      console.log(`${this.$root.mouseX}, ${this.$root.mouseY}`)
     },
     onClickOutside(e, el) {
       if (!this.wasDragging) {
         Event.$emit('newAction', 'Mouse click');
       }
     },
+    // @@
     onKeyDownOutside(e, el) {
       this.$root.parseModifiers(e);
-      Event.$emit('keypress', e.key);
+      // Event.$emit('keypress', e.key);
+      this.checkDebugKeypress(e);
       Event.$emit('newAction', 'keyDown');
     },
     onKeyUpOutside(e, el) {
       this.$root.parseModifiers(e);
-      Event.$emit('keypress', e.key);
+      this.checkDebugKeypress(e);
+      // Event.$emit('keypress', e.key);
       Event.$emit('newAction', 'keyUp');
     },
+    getLastKey(msg) {
+      // console.log(`Last key is: ${msg}`);
+      if (/Control/.test(msg)) {
+        msg = 'Ctrl'
+      }
+      if (msg !== this.lastKey) {
+        if (((this.$root.isDefault) && (msg !== 'Unidentified')) || ((msg == 'Ctrl') || (msg == 'Shift') || (msg == 'Alt'))) {
+          if ((msg == 'Ctrl') || (msg == 'Shift') || (msg == 'Alt')) {
+            var stack = []
+            if (this.hasCtrl)
+              stack.push(this.hasCtrl)
+            if (this.hasShift)
+              stack.push(this.hasShift)
+            if (this.hasAlt)
+              stack.push(this.hasAlt)
+
+            if (stack.length) {
+              console.log('Had length')
+              this.lastKey = stack.join('+')
+            } else {
+              console.log('No length')
+              this.lastKey = msg;
+            }
+          } else {
+            this.lastKey = msg;
+          }
+        } else if (msg == 'Unidentified') {
+          this.lastKey = 'Meta'
+        } else {
+          var stack = []
+          if (this.hasCtrl)
+            stack.push(this.hasCtrl)
+          if (this.hasShift)
+            stack.push(this.hasShift)
+          if (this.hasAlt)
+            stack.push(this.hasAlt)
+          stack.push(msg);
+          this.lastKey = stack.join('+')
+        }
+        // console.log(this.lastKey);
+        this.$root.lastKey = this.lastKey;
+      }
+    },
   },
-  computed: {
-    isDefault: function () { return this.$root.isDefault },
-  },
+
 })
 
 
@@ -456,8 +562,15 @@ var app = new Vue({
   el: '#app',
   data: {
     macOS: false,
+    debugMode: false,
+    name: 'none',
     panelWidth: 100,
     panelHeight: 200,
+    mouseX: 0,
+    mouseY: 0,
+    lastKey: 0,
+    lastAction: 'No action',
+    isDragging: false,
     winW: 200,
     winH: 200,
     persistent: true,
@@ -490,14 +603,45 @@ var app = new Vue({
         result = false;
       return result;
     },
+    rootName: function() {
+      const str = csInterface.getSystemPath(SystemPath.EXTENSION);
+      return str.substring(str.lastIndexOf('/') + 1, str.length);
+    },
+    clone: function () {
+      let self = this;
+      let child = {
+        name: self.rootName,
+        mouseX: self.mouseX,
+        mouseY: self.mouseY,
+        panelHeight: document.documentElement.clientHeight,
+        panelWidth: document.documentElement.clientWidth,
+        lastKey: self.lastKey,
+        lastAction: self.lastAction,
+      }
+      return JSON.stringify(child);
+    },
   },
-  mounted: function () {
+  mounted() {
     var self = this;
+    this.name = this.rootName;
     if (navigator.platform.indexOf('Win') > -1) { this.macOS = false; } else if (navigator.platform.indexOf('Mac') > -1) { this.macOS = true; }
     this.readStorage();
     this.setContextMenu();
+    Event.$on('debugModeOn', this.startDebug);
+    Event.$on('debugModeOff', this.stopDebug);
   },
   methods: {
+    startDebug() {
+      console.log('Starting debug');
+      this.debugMode = true;
+      if (this.isWake)
+        this.dispatchEvent('debug.listen', JSON.stringify(this.clone));
+    },
+    stopDebug() {
+      console.log('Stopping debug')
+      this.debugMode = false;
+      // this.dispatchEvent('debug.bounce', 'Stopping debug');
+    },  
     dispatchEvent(name, data) {
       var event = new CSEvent(name, 'APPLICATION');
       event.data = data;

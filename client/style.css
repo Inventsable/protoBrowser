@@ -1,3 +1,11 @@
+html {
+  border: 1.35px solid var(--color-debug);
+  height: 97.5vh;
+  width: 97.5vw;
+  margin: 0px;
+  padding: 0px;
+}
+
 .appGrid {
   box-sizing: border-box;
   width: 100%;

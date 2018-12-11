@@ -5,7 +5,7 @@
   --quint: cubic-bezier(0.84, 0.00, 0.16, 1.00);
 
   --color-null: #4a4a4a;
-  --color-debug-bg: white;
+  --color-debug: transparent;
 
   /* CSS variables reactively change via component */
   --color-bg: #323232;
