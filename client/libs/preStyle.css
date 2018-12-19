@@ -29,6 +29,10 @@
   --panel-width: 50px;
   /*  */
 
+  --color-note-light: #60ad5e;
+  --color-note-mid: #2e7d32;
+  --color-note-dark: #005005;
+  --color-note-icon: #fff;
   --color-cancel: #D32F2F;
   --font-size: .875rem;
   color: var(--color-text-default);
@@ -38,9 +42,25 @@
   transition: background-color 80ms var(--quad) 20ms;
 }
 
-svg {
-  width: 100%;
+html {
+  border: 1.35px solid var(--color-debug);
+  height: 97.5vh;
+  width: 97.5vw;
+  margin: 0px;
+  padding: 0px;
 }
+
+svg { width: 100%; }
+
+.icon {
+  display: block;
+  width: 1.8rem;
+  height: 1.8rem;
+  min-width: 1.8rem;
+  min-height: 1.8rem;
+  margin-right: .5rem;
+}
+
 
 ::-webkit-scrollbar {
   width: 10px;
@@ -62,4 +82,127 @@ svg {
 #app {
   box-sizing: border-box;
   width: 100%;
+}
+
+.appTop {
+  display: relative;
+  order: -2;
+  width: 100%;
+}
+.appBottom {
+  width: 100%;
+}
+
+.global-notification {
+  box-sizing: border-box;
+  position: absolute;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: calc(100% - 2rem);
+  top: 0;
+  left: 0;
+  padding: .5rem 1rem;
+  margin: .5rem 1rem;
+  border-radius: .5rem;
+  background-color: green;
+  z-index: 100;
+  color: white;
+  font-weight: 400;
+  user-select: none;
+  height: auto;
+  overflow: hidden;
+  transition: height 200ms var(--quad) 20ms;
+  box-shadow: .5rem .5rem .5rem rgba(0,0,0,0.2);
+}
+
+.note-preview {
+  margin-top: .5rem;
+  height: 0px;
+  width: 100%;
+  padding-bottom: 56.25%;
+  position: relative;
+  background-color: var(--color-note-dark);
+}
+
+.note-list {
+  list-style: inside;
+  cursor: default;
+}
+.note-list > li {
+  margin: .25rem 0px;
+}
+
+.note-preview > div {
+  position: absolute;
+	top: 0; bottom: 0; left: 0; right: 0;
+}
+
+.global-notification-text {
+  color: white;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 400;
+  display: flex;
+  justify-content: center;
+}
+
+.global-notification-wrap, .global-notification-details {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 0rem;
+  padding: .25rem 0px;
+  font-weight: 300;
+}
+
+.note-cancel {
+  width: 2rem;
+}
+
+.note-display {
+  width: 2rem;
+}
+
+.note-header {
+  flex-wrap: nowrap;
+  width: calc(100% - 3rem);
+  display: flex;
+  justify-content: center;
+  cursor: default;
+}
+
+.global-notification-toggle {
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+}
+
+.note-icon {
+  cursor: pointer;
+  width: 1.8rem;
+  height: 1.8rem;
+}
+
+
+/* For notifications only */
+@media screen and (max-width:199px) {
+
+}
+@media screen and (max-width:119px) {
+  .global-notification-wrap {
+    flex-direction: column;
+  }
+  .global-notification {
+    padding: .5rem 0px;
+    margin: .5rem 0px;
+    width: 100%;
+  }
+  .global-notification-toggle {
+    width: 100%;
+    margin: 0px 0px;
+    padding: 0px;
+  }
 }
